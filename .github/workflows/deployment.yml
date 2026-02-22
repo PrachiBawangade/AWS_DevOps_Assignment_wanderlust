@@ -42,19 +42,18 @@ jobs:
           chmod 600 key.pem
 
       - name: Deploy on EC2
-        run: |
-          ssh -tt -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << EOF
-
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
-          docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
-
-          docker pull ${{ steps.login-ecr.outputs.registry }}/wanderlust-app:latest
-
-          docker stop wanderlust-app || true
-          docker rm wanderlust-app || true
-
-          docker run -d -p 80:3000 --name wanderlust-app --restart always ${{ steps.login-ecr.outputs.registry }}/wanderlust-app:latest
-
-          EOF
-
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+        
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+        
+        docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }} &&
+        docker pull ${{ steps.login-ecr.outputs.registry }}/wanderlust-app:latest &&
+        
+        (docker stop wanderlust-app || true) &&
+        (docker rm wanderlust-app || true) &&
+        
+        docker run -d -p 80:3000 --name wanderlust-app --restart always \
+        ${{ steps.login-ecr.outputs.registry }}/wanderlust-app:latest
+        "
       
