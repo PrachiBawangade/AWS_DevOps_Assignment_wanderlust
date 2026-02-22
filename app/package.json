@@ -1,0 +1,14 @@
+{
+  "name": "aws-devops-assignment-app",
+  "version": "1.0.0",
+  "description": "Interactive static travel app for AWS DevOps assignment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Prachi Bawangade",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
